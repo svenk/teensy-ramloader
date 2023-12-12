@@ -1,0 +1,7 @@
+*.elf
+*.o
+*.a
+*.hex
+.pio
+.vscode
+other-codes
