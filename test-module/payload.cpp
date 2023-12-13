@@ -1,4 +1,4 @@
-//#include <Arduino.h>
+#include <Arduino.h>
 #include <cstdint>
 
 extern "C" { // for startup symbol
@@ -25,7 +25,7 @@ void third_function() {
 
 void test_main() {
   any_function();
-//  Serial.println("test_main");
+  Serial.println("test_main");
 }
 
 void fourth_function() {

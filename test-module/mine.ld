@@ -1,5 +1,9 @@
 /* RAM2 0x20200000 + RAM2SIZE 512*1024 - STORAGESIZE = 50*1024 */
-LOAD_ADDR = 0x20273800; /* to be changed before linking */
+/* LOAD_ADDR = 0x20273800; *//* to be changed before linking */
+
+/* Use global host symbol instead, is in ICTS:
+   readelf -a build/firmware.elf | grep global_storage */
+LOAD_ADDR = 0x20002254;
 
 SECTIONS
 {

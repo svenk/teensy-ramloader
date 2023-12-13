@@ -148,6 +148,33 @@ void call_in_memory_heap_function() {
   Serial.println("call_in_memory_heap_function: done");
 }
 
+uint8_t global_storage[1024];
+
+void call_in_global_function() {
+  uint8_t* stack_program = align(global_storage, 32);
+  memcpy(stack_program, adder_storage, sizeof(adder_storage)); // LAEUFT!
+  Serial.printf("call_in_global_function: Calling to %x\n", stack_program);
+  auto adder = (adder_t*)(stack_program+1);
+  auto res = adder(1,2);
+  Serial.printf("My adder berechnete: %d\n", res);
+  Serial.println("call_in_global_function: done");
+}
+
+void call_global_loaded() {
+  uint8_t* load_addr = global_storage;
+  memcpy(load_addr, payload_bin, payload_bin_len);
+  auto entrypoint = (uint8_t*) ENTRY_POINT;
+  auto entry = (entry_t*)(ENTRY_POINT); // includes blx selection bit
+  for(auto i = (uint8_t*)entrypoint-1; i < (uint8_t*)entrypoint + 10; i++) {
+    Serial.printf("Addr %x = %x\n", i, *i);
+  }
+
+  Serial.printf("now jumping to %X\n", entrypoint);
+  entry();
+  Serial.println("Successfully returned");
+}
+
+
 void call_fixed_address_loaded() {
   auto load_addr = (uint8_t*) 0x20273800; // as in linker script, already aligned
   Serial.printf("call_fixed_address_loaded working at %X\n", load_addr);
@@ -222,12 +249,18 @@ void loop() {
       case 's':
         call_in_memory_stack_function();
         break;
-      case 't':
+      case 't': 
         another_target();
         Serial.println("Well back we are");
         break;
       case 'h':
         call_in_memory_heap_function();
+        break;
+      case 'g':
+        call_in_global_function();
+        break;
+      case 'l':
+        call_global_loaded();
         break;
       case 'f':
         call_fixed_address_loaded();
