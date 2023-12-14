@@ -1,11 +1,22 @@
 #include <Arduino.h>
 #include <cstdint>
 
-//#include "new.cpp"
+// This file contains the code which is evventually loaded "in RAM"
+// at runtime from the armv7 microprocessor.
+//
+// It can link to any code which is part of the base image (firmware,
+// arduino programm, whatever you want to call it), thus can also share
+// the same header files.
+// 
+// There are some caveats, such as symbols in headers might not exist
+// because they were stripped or inlined at the compilation/linking stage
+// from the base code.
 
-// Weird: Why is this needed?
+// One left weirdness, why is this needed? Probably for above reason.
 void * operator new(size_t size) { return malloc(size); }
 
+// Testing the C++ kitchen sink. Virtual destructors do not work, but everything
+// else does. Templating is a no-brainer since it is not related to linking.
 struct Test {
   int a;
   
