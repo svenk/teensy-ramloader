@@ -1,7 +1,7 @@
 
 PREFIX=/home/sven/.platformio/packages/toolchain-gccarmnoneeabi-teensy/bin/
 INC=-L/home/sven/.platformio/packages/framework-arduinoteensy/cores/teensy4
-CFLAGS=-fno-exceptions -felide-constructors -fno-rtti -std=gnu++14 -Wno-error=narrowing -fpermissive -fno-threadsafe-statics -Wall -ffunction-sections -fdata-sections -mthumb -mcpu=cortex-m7 -nostdlib -mfloat-abi=hard -mfpu=fpv5-d16 -O2 -DPLATFORMIO=60107 -D__IMXRT1062__ -DARDUINO_TEENSY41 -DUSB_SERIAL -DARDUINO=10805 -DTEENSYDUINO=158 -DCORE_TEENSY -DF_CPU=600000000 -DLAYOUT_US_ENGLISH -I/home/sven/.platformio/packages/framework-arduinoteensy/cores/teensy4
+CFLAGS=-fno-exceptions -felide-constructors -fno-rtti -std=gnu++14 -Wno-error=narrowing -fpermissive -fno-threadsafe-statics -fno-use-cxa-atexit -Wall -ffunction-sections -fdata-sections -mthumb -mcpu=cortex-m7 -nostdlib -mfloat-abi=hard -mfpu=fpv5-d16 -O2 -DPLATFORMIO=60107 -D__IMXRT1062__ -DARDUINO_TEENSY41 -DUSB_SERIAL -DARDUINO=10805 -DTEENSYDUINO=158 -DCORE_TEENSY -DF_CPU=600000000 -DLAYOUT_US_ENGLISH -I/home/sven/.platformio/packages/framework-arduinoteensy/cores/teensy4
 
 ### Attention: Go back to -O2 when using arduino libs in cod
 ###      otherwise it will have weird linker errors such as "undefined reference to pulseIn"
@@ -31,6 +31,7 @@ payload.elf: payload.a firmware-dyn.elf.a
 # using the default linker script, see `arm-none-ebai-ld --verbose` for its content
 	sed -i "s/^LOAD_ADDR.*/LOAD_ADDR = $(LOAD_ADDR);/" $(ldscript)
 	$(PREFIX)arm-none-eabi-gcc $(CFLAGS) $(INC) -o $@ -T $(ldscript) -nostartfiles -nodefaultlibs -nostdlib  --static-pie -L../host/build -l:firmware-dyn.elf.a -L. -l:payload.a -g -Wl,-e,test_main payload.a
+#	$(PREFIX)arm-none-eabi-strip --strip-unneeded  payload.elf
 	
 payload.bin: payload.elf
 	$(PREFIX)arm-none-eabi-objcopy --dump-section .text=payload.bin  payload.elf
@@ -43,6 +44,9 @@ payload.h: payload.bin
 clean:
 	rm -f *.elf *.a *.o
 
+# show size statistics:
+#    nm --print-size --size-sort --radix=d payload.elf
+#    arm-none-eabi-size --common payload.elf
 
 # what follows are failed experiments.
 
