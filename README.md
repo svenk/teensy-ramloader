@@ -32,8 +32,6 @@ For implementing a plugin system, I evaluated different approaches:
 * Going bare metal question: What should prevent me from running any machine code from RAM, given the large
   and uniform address space of armv7?
 
-
-
 ## Features and usage
 
 The code in this repository is a minimal [PlatformIO](https://platformio.org/) project for the host code and
@@ -53,6 +51,48 @@ To play with the code,
 4. Re-run `cd host && pio run` to include the new guest code
 
 The host currently demonstrates different variants where to load the code from.
+
+### Demonstration session
+
+This is how it looks like:
+
+```
+$ pio device monitor
+....
+oooooooooo
+call_in_global_function: Calling to 20002660
+My adder computed: 3
+call_in_global_function: done
+ooNo crash report avail.
+ooooooAddr 2000279c = ff
+Addr 2000279d = f7
+Addr 2000279e = a4
+Addr 2000279f = bf
+Addr 200027a0 = 5f
+Addr 200027a1 = f8
+Addr 200027a2 = 0
+Addr 200027a3 = f0
+Addr 200027a4 = 1d
+Addr 200027a5 = 24
+Addr 200027a6 = 0
+now jumping to 2000279D
+test_main starting
+global *x=200028c0, value  x=17
+Hallo Welt
+this is call_me_back!
+
+Somewhere starting
+Test::Test(456)
+Test::f, a=456
+Somewhere finishing
+Test::Test~(a was 456)
+Test::Test(77)
+Hansi::Hansi
+Hansi::f, a=77
+test_main
+Successfully returned
+ooo
+```
 
 ## About the loader address
 
